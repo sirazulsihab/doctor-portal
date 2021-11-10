@@ -27,13 +27,15 @@ import {
 import { Button } from '@mui/material';
 import MakeAdmin from './MakeAdmin/MakeAdmin';
 import AddDoctor from './AddDoctor/AddDoctor';
+import useAuth from '../../../hooks/useAuth';
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 function Dashboard(props) {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     let { path, url } = useRouteMatch();
+    const { admin } = useAuth();
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -43,9 +45,12 @@ function Dashboard(props) {
         <div>
             <Toolbar />
             <Divider />
+            <Link to='/appointment'><Button color="inherit">Appoinment</Button></Link>
             <Link to={`${url}`}><Button color="inherit">Dashboard</Button></Link>
-            <Link to={`${url}/makeAdmin`}><Button>Make Admin</Button></Link>
-            <Link to={`${url}/addDoctor`}><Button>Add Doctor</Button></Link>
+            {admin && <Box>
+                <Link to={`${url}/makeAdmin`}><Button>Make Admin</Button></Link>
+                <Link to={`${url}/addDoctor`}><Button>Add Doctor</Button></Link>
+            </Box>}
             <List>
                 {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
                     <ListItem button key={text}>

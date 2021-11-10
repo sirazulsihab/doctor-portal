@@ -10,6 +10,7 @@ const useFirebase = () => {
     const [user, setUser] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [authError, setAuthError] = useState('');
+    const [admin, setAdmin] = useState(false);
 
     const auth = getAuth();
 
@@ -33,7 +34,6 @@ const useFirebase = () => {
             })
             .catch((error) => {
                 setAuthError(error.message);
-                console.log(error);
             })
             .finally(() => setIsLoading(false));
     }
@@ -45,7 +45,6 @@ const useFirebase = () => {
                 const destination = location?.state?.from || '/';
                 history.replace(destination);
                 setAuthError('');
-                console.log(userCredential)
             })
             .catch((error) => {
                 setAuthError(error.message);
@@ -61,7 +60,12 @@ const useFirebase = () => {
                 saveUser(user.email, user.displayName, 'put')
             })
     }
-
+    useEffect(() => {
+        const url = `http://localhost:5000/users/${user.email}`
+        fetch(url)
+        .then(res => res.json())
+        .then(data => setAdmin(data.admin))
+    }, [])
 
     // observer user state
     useEffect(() => {
@@ -74,7 +78,7 @@ const useFirebase = () => {
             setIsLoading(false);
         });
         return () => unsubscribed;
-    }, [])
+    }, [user.email])
 
     const logout = () => {
         setIsLoading(true);
@@ -100,6 +104,7 @@ const useFirebase = () => {
         user,
         isLoading,
         authError,
+        admin,
         registerUser,
         googleSignIn,
         loginUser,
